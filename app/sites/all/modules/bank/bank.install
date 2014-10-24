@@ -1,0 +1,62 @@
+<?php
+
+function bank_schema() {
+
+$schema['bank'] = array(
+    'description' => 'Stores the details of bank.',
+    'fields' => array(
+      'id' => array(
+        'type' => 'serial',
+        'description' => 'auto incrementing.',
+      ),
+      'name' => array(
+        'type' => 'varchar',
+          'length' => 128,
+        'description' => 'name of customer.',
+      ),
+      'banknumber' => array(
+        'type' => 'varchar',
+        'length' => 128,
+        'description' => 'number of bank account.',
+      ),
+      'password' => array(
+        'type' => 'varchar',
+        'length' => 25,
+        'description' => "The password.",
+      ),
+   
+ 'comments' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'default' => '',
+        'description' => "comments of the form .",
+      ),
+        'modifiedon' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'description' => "The time of modification.",
+      ),
+        'modifiedby' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'description' => "The person who modified.",
+      ),
+        'createdon' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'description' => "The time of creation of table",
+      ),
+        'createdby' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'description' => "The person who created the table.",
+      ),
+    ),
+   'primary key' => array('id')
+  );
+return $schema;
+}
+
+function bank_uninstall(){
+drupal_uninstall_schema("bank");
+}

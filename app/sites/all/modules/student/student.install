@@ -1,0 +1,114 @@
+<?php
+
+function student_schema() {
+
+$schema['student'] = array(
+    'description' => 'Stores the details of student.',
+    'fields' => array(
+      'id' => array(
+        'type' => 'serial',
+        'description' => 'auto incrementing.',
+      ),
+      'name' => array(
+        'type' => 'varchar',
+          'length' => 128,
+        'description' => 'name of student.',
+      ),
+      'class' => array(
+        'type' => 'varchar',
+        'length' => 128,
+        'description' => 'class of student.',
+      ),
+      'honors' => array(
+        'type' => 'varchar',
+        'length' => 25,
+        'description' => "The honors taken.",
+      ),
+   
+ 'syllubus' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'default' => '',
+        'description' => "syllubus of the student .",
+      ),
+         
+ 'gender' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'default' => '',
+        'description' => "gender of the student .",
+      ),
+         
+ 'fname' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'default' => '',
+        'description' => "fathers name of the student .",
+      ),
+         
+ 'mname' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'default' => '',
+        'description' => "mothers name of the student .",
+      ),
+         
+ 'mtong' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'default' => '',
+        'description' => "mother tongue of the student .",
+      ),
+         
+ 'state' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'default' => '',
+        'description' => "state of the student .",
+      ),
+         
+ 'city' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'default' => '',
+        'description' => "city of the student .",
+      ),
+         
+ 'hobby' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'default' => '',
+        'description' => "hobby of the student .",
+      ),
+      
+      
+      
+        'modifiedon' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'description' => "The time of modification.",
+      ),
+        'modifiedby' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'description' => "The person who modified.",
+      ),
+        'createdon' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'description' => "The time of creation of table",
+      ),
+        'createdby' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'description' => "The person who created the table.",
+      ),
+    ),
+   'primary key' => array('id')
+  );
+return $schema;
+}
+
+function student_uninstall(){
+drupal_uninstall_schema("student");
+}

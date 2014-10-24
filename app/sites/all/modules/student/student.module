@@ -1,0 +1,237 @@
+<?php
+
+function student_menu() {
+    $items['student/add'] = array(
+      'title' => 'Example Student enrollment Form',
+      'description' => 'A form to enroll studemts with.',
+      'page callback' => 'mycall1',
+      'access callback' => TRUE
+    );
+  
+    $items['student/edit/%'] = array(
+      'title' => 'Edit student Details ',
+      'description' => 'A form to edit the details.',
+      'page callback' => 'mycall1',
+      'access callback' => TRUE
+    );
+
+    return $items;
+}
+
+
+
+function mycall1() {
+    return drupal_get_form('student1_form');
+}
+
+function check($c) {
+    echo '<pre>';
+    print_r($c);
+    die;
+}
+
+function student1_form($form, &$form_state) {
+    
+      $form['Name'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Name'),
+      '#required' => TRUE,
+    );
+
+    $form['Class'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Standard'),
+      '#maxlength' => 128,
+      '#required' => TRUE,
+    );
+
+    $form['honors'] = array(
+      '#type' =>
+      'checkbox',
+      '#title' => t('Do you want to attend honors courses.'),
+    );
+
+    $form['syllubus'] = array(
+      '#type' => 'radios',
+      '#title' => t('which syllubus do you need to follow'),
+      '#options' => array(
+        t('CBSE'),
+        t('ICSE'),
+        t('STATE'),
+      )
+    );
+     $category['selected'] = 0;
+    $form['Gender'] = array(
+      '#type' => 'select',
+      '#title' => t('Gender'),
+      '#options' => array(
+        0 => t('Male'),
+        1 => t('Female'),
+      ),
+      '#default_value' => $category['selected'],
+      '#description' => t('Select this to select the gender of student.'),
+    );
+
+    $form['fname'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Father Name'),
+      '#required' => TRUE,
+    );
+
+    $form['mname'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Mother Name'),
+      '#required' => TRUE,
+    );
+
+    $form['mt'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Mother tongue'),
+    );
+
+    $term = taxonomy_vocabulary_machine_name_load('state');
+    $terms = taxonomy_get_tree($term->vid);
+    $state = array(0=>'--Select--');
+   
+    foreach ($terms as $t) {
+        if ($t->parents[0] == 0) {
+            $state[$t->tid] = $t->name;
+            }
+    }
+    $form['states'] = array(
+      '#type' => 'select',
+      '#title' => t('Click on your state'),
+      '#options' => $state,
+      '#required' => true,
+      '#default_value' => "",
+      '#ajax' => array(
+        'callback' => 'ajax_example_simplest_callback',
+        'wrapper' => 'cities_div',
+      ),
+    );
+    
+    
+    
+    $opti = array('--selecting--');
+    $category['selected'] = 'Bangalore';
+    $form['cities'] = array(
+      '#type' => 'select',
+      '#title' => t('Click on your city'),
+      '#options'=>$opti,
+      '#default_value' => $state[13],
+      '#prefix' => '<div id="cities_div">',
+      '#suffix' => '</div>',
+    );
+  
+    
+    
+    
+    if (!empty($form_state['values']['states'])) {
+        $a = $form_state['values']['states'];
+     //   $opt = array('--select--');
+        foreach ($terms as $t) {
+	
+            if ($t->parents[0] == $a) {
+                 $opt[$t->tid] = $t->name;
+            }
+        }
+        $form['cities']['#options'] = $opt;
+    }
+  
+  
+    
+    $form['hobby'] = array(
+      '#title' => t('Hobbies'),
+      '#type' => 'text_format',
+      '#format' => 'filtered_html',
+    );
+   
+    $form['submit_button'] = array(
+      '#type' => 'submit',
+      '#value' => t('Save!'),
+    );
+     if (arg(1) == "edit") {
+        $path = arg(2);
+
+
+        $result = db_select('student')
+            ->fields('student')
+            ->condition('id', $path, '=')
+            ->execute()
+            ->fetchAssoc();
+  
+
+        $form['Name']['#default_value'] = $result['name'];
+        $form['Class']['#default_value'] = $result['class'];
+        $form['honors']['#default_value'] = $result['honors'];
+         $form['syllubus']['#default_value'] = $result['syllubus'];
+        $form['Gender']['#default_value'] = $result['gender'];
+        $form['fname']['#default_value'] = $result['fname'];
+          $form['mname']['#default_value'] = $result['mname'];
+        $form['mt']['#default_value'] = $result['mtong'];
+        $form['states']['#default_value'] = $result['state'];
+         $form['syllubus']['#default_value'] = $result['syllubus'];
+          $a = $form_state['values']['states'];
+        $opt = array('--selecting--');
+        foreach ($terms as $t) {
+	
+            if ($t->parents[0] == $a) {
+                 $opt[$t->tid] = $t->name;
+            }
+        }
+       // $form['cities']['#options'] = $opt;
+        //$form['cities']['#options'] = $opt[$t->tid];
+        // check($opt[$t->tid]);
+         
+         
+         
+        $form['cities']['#default_value'] = $opt[$t->tid];
+        $form['hobby']['#default_value'] = $result['hobby'];
+        
+       
+       
+    }
+    
+
+    return $form;
+}
+
+function ajax_example_simplest_callback($form, $form_state) {
+
+    return $form['cities'];
+}
+
+
+
+function student1_form_validate($form, &$form_state) {
+   
+}
+
+
+function student1_form_submit($form, &$form_state) {
+    
+ //   check($form_state['values']['hobby']['value']);
+     global $user;
+        $date = new DateTime();
+        $d1 = $date->format('Y-m-d H:i:s');
+        db_insert('student')
+            ->fields(array(
+              'name' => $form_state['values']['Name'],
+              'class' => $form_state['values']['Class'],
+              'honors' => $form_state['values']['honors'],
+              'syllubus' => $form_state['values']['syllubus'],
+              'gender' => $form_state['values']['Gender'],
+              'fname' => $form_state['values']['fname'],
+              'mname' => $form_state['values']['mname'],
+              'mtong' => $form_state['values']['mt'],
+              'state' => $form_state['values']['states'],
+              'city' => $form_state['values']['cities'],
+              'hobby' => $form_state['values']['hobby']['value'],
+              'modifiedby' => $user->uid,
+              'modifiedon' => $d1,
+              'createdon' => $d1,
+              'createdby' => $user->uid
+            ))
+            ->execute();
+    
+}

@@ -1,0 +1,4 @@
+core = 7.x
+description = An example module used to create a bank form.
+name = Bank Form Example Module
+version = 7.x
